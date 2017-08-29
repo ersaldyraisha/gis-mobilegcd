@@ -16,12 +16,11 @@
       }
     </script>-->
 
-    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <!-- <link href="lib/ionic/css/ionic.css" rel="stylesheet"> -->
+    <!-- <link href="css/style.css" rel="stylesheet"> -->
 
-    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above -->
     <link href="css/ionic.app.css" rel="stylesheet">
-    -->
 
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
@@ -31,14 +30,61 @@
 
     <!-- your app's js -->
     <script src="js/app.js"></script>
+    <script src="js/vendor/ng-map.js"></script>
+    <script src="js/vendor/GreatCircle.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9YavfvQiEuyekTewaT8X3IxFEJ6I8kLI"></script>
   </head>
-  <body ng-app="starter">
+  <body ng-app="mobilegcd" platform-android>
 
     <ion-pane>
-      <ion-header-bar class="bar-stable">
-        <h1 class="title">Ionic Blank Starter</h1>
+      <ion-header-bar align-title="center" class="bar bar-header bar-dark bar-dark--custom">
+        <h1 class="title">GCD Calculator</h1>
       </ion-header-bar>
-      <ion-content>
+      
+      <ion-content ng-controller="mainController">
+        <div class="flex-row">
+
+          <div class="map-container">
+            <ng-map class="map" center="[0,0]" zoom=1 map-type-control="false" fullscreen-control="false" street-view-control="false" on-click="getPos()">
+              <custom-marker ng-if="pos.start" position="{{pos.start}}">
+                <div class="custom-marker--start"></div>
+              </custom-marker>
+              <custom-marker ng-if="pos.end" position="{{pos.end}}">
+                <div class="custom-marker--end"></div>
+              </custom-marker>
+            </ng-map>
+          </div>
+
+          <div class="btn-group">
+            <div class="click-notice" ng-if="isInputActive.start">
+              <h3>Tap map area to specify start location</h3>
+            </div>
+            <div class="click-notice" ng-if="isInputActive.end">
+              <h3>Tap map area to specify end location</h3>
+            </div>
+            <div class="list">
+              <label class="item item-input item-stacked-label item-input--start" on-tap="inputPos('start')">
+                <i class="icon ion-location placeholder-icon"></i>
+                <span class="input-label">Start Position</span>
+                <input type="text" placeholder="Click to add position" ng-model="pos.start" disabled>
+              </label>
+              <label class="item item-input item-stacked-label item-input--end" on-tap="inputPos('end')">
+                <i class="icon ion-location placeholder-icon"></i>
+                <span class="input-label">End Position</span>
+                <input type="text" placeholder="Click to add position" ng-model="pos.end" disabled> 
+              </label>
+              <div class="item gcd-result">
+                 <center>
+                  <p>Distance: <span ng-bind="result.distance"></span> km</p>
+                  <p>Initial Bearing: <span ng-bind="result.startBearing"></span></p>
+                  <p>Final Bearing: <span ng-bind="result.finalBearing"></span></p>
+                 </center>
+              </div> 
+              <button class="button button-assertive button-full" on-tap="reset()">Reset</button>
+            </div>
+          </div>
+        </div>
+
       </ion-content>
     </ion-pane>
   </body>
